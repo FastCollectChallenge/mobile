@@ -12,6 +12,7 @@
 
   /* ---------- réglages ---------- */
   const UI_SCALE = 0.75;         // 1 = taille normale, 0.75 = 25 % plus petit, 0.6 = encore plus petit
+  const HOME_LOGO = "icons/Fast%20Collect%20Challenge.png";   // logo à gauche du titre sur l'accueil
   const TOUCH_OFFSET_Y = 56;     // le joystick 🕹️ est décalé au-dessus du doigt pour rester visible
   const NO_GLOW = true;          // supprime les halos (shadowBlur) autour des pommes : gros gain de fluidité
   const CAP_60FPS = true;        // évite que la balle aille 2x plus vite sur les écrans 120 Hz
@@ -128,12 +129,45 @@
   @media (orientation:portrait){
     html.fcm #home-screen{--u:min(calc(100vw / 600),calc(100dvh / 900))}
     html.fcm #hm-root{--hu:min(calc(100vw / 700),calc(100dvh / 1000))}
-    html.fcm #hm-title{top:calc(190 * var(--hu))}
     html.fcm #hm-modes{flex-direction:column;gap:calc(30 * var(--u));top:calc(50% + 60px)}
     html.fcm #spawn-panel{top:56px}
     html.fcm #msg-container-top{top:90px}
-  }`;
+  }
+  /* accueil mobile : titre avec logo, puis UNE seule barre de rubriques (sans le logo joystick) */
+  html.fcm #hm-title{top:calc(env(safe-area-inset-top,0px) + 34px);display:flex;align-items:center;justify-content:center;gap:10px}
+  html.fcm #hm-title span{font-size:clamp(18px,4.4vw,30px)}
+  html.fcm .fcm-logo{height:clamp(26px,5.5vw,40px);width:auto;display:block;flex:none}
+  html.fcm #hm-head{top:calc(env(safe-area-inset-top,0px) + 72px);left:50%;right:auto;transform:translateX(-50%);width:max-content;max-width:calc(100vw - 16px);height:auto;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;padding:8px 4px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.22);border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+  html.fcm #hm-head .hm-card,html.fcm #hm-side{display:contents}
+  html.fcm #hm-joy,html.fcm #hm-head .hm-vl,html.fcm #hm-head .hm-hl{display:none}
+  html.fcm #hm-head .hm-ico{gap:6px;padding:4px 12px;white-space:nowrap}
+  html.fcm #hm-head .hm-ico:hover{transform:none}
+  html.fcm #hm-head .hm-ico img{height:16px;width:auto}
+  html.fcm #hm-head .fcm-lbl{font-size:10px;font-weight:700;line-height:1;color:#e8ecf4}
+  html.fcm #hm-account{order:1}
+  html.fcm #hm-discord{order:2;border-left:1px solid rgba(255,255,255,.25)}
+  html.fcm #hm-privacy{order:3;border-left:1px solid rgba(255,255,255,.25)}
+  html.fcm #hm-help{order:4;border-left:1px solid rgba(255,255,255,.25)}`;
   document.head.appendChild(css);
+
+  /* ---------- accueil : logo dans le titre + libellés des rubriques ---------- */
+  function fixHome() {
+    const title = $("hm-title"), head = $("hm-head");
+    if (!title || !head) return false;
+    if (!title.querySelector(".fcm-logo")) {
+      const im = new Image(); im.className = "fcm-logo"; im.src = HOME_LOGO; im.alt = ""; im.draggable = false;
+      title.insertBefore(im, title.firstChild);
+    }
+    ["hm-account", "hm-discord", "hm-privacy", "hm-help"].forEach(id => {
+      const el = $(id); if (!el) return;
+      let l = el.querySelector(".fcm-lbl");
+      if (!l) { l = document.createElement("span"); l.className = "fcm-lbl"; el.appendChild(l); }
+      const im = el.querySelector("img"); l.textContent = (im && im.alt) || "";
+    });
+    return true;
+  }
+  if (!fixHome()) { let n = 0; const iv = setInterval(() => { if (fixHome() || ++n > 40) clearInterval(iv); }, 250); }
+  window.addEventListener("langchange", () => setTimeout(fixHome, 0));
 
   /* ---------- contrôles tactiles : le doigt remplace la souris ---------- */
   const cv = $("gameCanvas");
