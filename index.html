@@ -11,8 +11,9 @@
     if (sessionStorage.getItem("fc_desktop")) return;
   } catch (e) {}
   var ua = navigator.userAgent || "";
-  var isPhone = (navigator.userAgentData && navigator.userAgentData.mobile === true) ||
-    /Android.+Mobile|iPhone|iPod|Windows Phone|webOS|BlackBerry|Opera Mini/i.test(ua);
+var isPhone = (navigator.userAgentData && navigator.userAgentData.mobile === true) ||
+    /Android|iPhone|iPod|Windows Phone|webOS|BlackBerry|Opera Mini|Mobile/i.test(ua) ||
+    (navigator.maxTouchPoints > 0 && Math.min(screen.width, screen.height) < 700);
   if (isPhone) location.replace("https://mobile.fastcollectchallenge.com" + location.pathname + location.search + location.hash);
 })();
 </script>
