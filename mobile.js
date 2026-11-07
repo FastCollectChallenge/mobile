@@ -13,6 +13,8 @@
   /* ---------- réglages ---------- */
   const UI_SCALE = 0.75;         // 1 = taille normale, 0.75 = 25 % plus petit, 0.6 = encore plus petit
   const HOME_LOGO = "icons/Fast%20Collect%20Challenge.png";   // logo à gauche du titre sur l'accueil
+  const DEBUG = true;            // bandeau de diagnostic en bas de l'écran (mettre false une fois le problème réglé)
+  const VERSION = "v3";
   const TOUCH_OFFSET_Y = 56;     // le joystick 🕹️ est décalé au-dessus du doigt pour rester visible
   const NO_GLOW = true;          // supprime les halos (shadowBlur) autour des pommes : gros gain de fluidité
   const CAP_60FPS = true;        // évite que la balle aille 2x plus vite sur les écrans 120 Hz
@@ -168,6 +170,20 @@
   }
   if (!fixHome()) { let n = 0; const iv = setInterval(() => { if (fixHome() || ++n > 40) clearInterval(iv); }, 250); }
   window.addEventListener("langchange", () => setTimeout(fixHome, 0));
+
+  /* ---------- bandeau de diagnostic (temporaire) ---------- */
+  if (DEBUG) {
+    const b = document.createElement("div");
+    b.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:2147483647;background:rgba(0,0,0,.85);color:#4ADE80;font:11px/1.4 monospace;padding:4px 8px;pointer-events:none;white-space:pre-wrap";
+    document.body.appendChild(b);
+    const upd = () => {
+      const cs = id => { const e = $(id); return e ? getComputedStyle(e).display : "ABSENT"; };
+      b.textContent = "mobile.js " + VERSION + " | fcm:" + root.classList.contains("fcm") +
+        " | home-ui(hm-root):" + (!!$("hm-root")) + " | hm-head:" + cs("hm-head") + " | hm-joy:" + cs("hm-joy") +
+        " | logo:" + (!!document.querySelector(".fcm-logo")) + " | " + innerWidth + "x" + innerHeight;
+    };
+    upd(); setInterval(upd, 1000);
+  }
 
   /* ---------- contrôles tactiles : le doigt remplace la souris ---------- */
   const cv = $("gameCanvas");
