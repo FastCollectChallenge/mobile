@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <script>
-(function () {
-  if (location.hostname !== "mobile.fastcollectchallenge.com") return;
-  try {
-    if (new URLSearchParams(location.search).get("mobile") === "1") sessionStorage.setItem("fc_stay_mobile", "1");
-    if (sessionStorage.getItem("fc_stay_mobile")) return;
-  } catch (e) {}
-  var ua = navigator.userAgent || "";
-  var isPhone = (navigator.userAgentData && navigator.userAgentData.mobile === true) ||
-    /Android|iPhone|iPad|iPod|Mobile|Tablet|Silk|Windows Phone|webOS|BlackBerry|Opera Mini/i.test(ua) ||
-    (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
-    (window.matchMedia && matchMedia("(pointer:coarse)").matches && matchMedia("(hover:none)").matches);
-  if (!isPhone) location.replace("https://fastcollectchallenge.com" + location.pathname + location.search + location.hash);
-})();
-</script>
+    (function () {
+      if (location.hostname !== "mobile.fastcollectchallenge.com") return;
+      try {
+        if (new URLSearchParams(location.search).get("mobile") === "1") sessionStorage.setItem("fc_stay_mobile", "1");
+        if (sessionStorage.getItem("fc_stay_mobile")) return;
+      } catch (e) {}
+      var ua = navigator.userAgent || "";
+      var isPhone = (navigator.userAgentData && navigator.userAgentData.mobile === true) ||
+        /Android|iPhone|iPad|iPod|Mobile|Tablet|Silk|Windows Phone|webOS|BlackBerry|Opera Mini/i.test(ua) ||
+        (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
+        (window.matchMedia && matchMedia("(pointer:coarse)").matches && matchMedia("(hover:none)").matches);
+      if (!isPhone) location.replace("https://fastcollectchallenge.com" + location.pathname + location.search + location.hash);
+    })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=0.75, minimum-scale=0.75, maximum-scale=0.75, user-scalable=no, viewport-fit=cover">
     <meta name="description" content="🕹 Join Discord: https://discord.gg/52UY26TBQF">
     <link rel="icon" href="icons/Favicon.png" type="image/png">
@@ -629,17 +629,17 @@ body {
         let currentInventoryTab = "apples";
 
         const IMG_FRUITS = {
-            red: "apples/Red%20Apple.png",
-            green: "apples/Green%20Apple.png",
-            golden: "apples/Golden%20Apple.png",
-            diamond: "apples/Diamond%20Apple.png",
-            candy: "apples/Candy%20Apple.png",
-            lava: "apples/Lava%20Apple.png",
-            galaxy: "apples/Galaxy%20Apple.png",
-            dark: "apples/Dark%20Apple.png",
+            red: "https://minecraft.wiki/images/Apple_JE3_BE3.png?3853a",
+            green: "https://media.forgecdn.net/avatars/thumbnails/1159/26/256/256/638727529052260282.png",
+            golden: "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/54/Golden_Apple_JE2_BE2.png/revision/latest/thumbnail/width/360/height/360?cb=20200521041809",
+            diamond: "https://minecraft-max.net/upload/iblock/e00/t1ck3mvx35ipy8qck6de5vejzaul0ui4.png",
+            candy: "https://media.forgecdn.net/avatars/thumbnails/1126/504/256/256/638684252218093369.png",
+            lava: "https://static.wikia.nocookie.net/create_mod/images/1/1a/Honeyed_Apple.png/revision/latest?cb=20210413133617",
+            galaxy: "https://static.planetminecraft.com/files/image/minecraft/texture-pack/2024/103/18047006-pack_xl.webp",
+            dark: "https://static.wikia.nocookie.net/minecraftcreepypasta/images/2/28/The_Dark_Apple.png/revision/latest?cb=20180216141542",
             salhini: "apples/salhiniappelini.png",
-            bloodmoon: "apples/Bloodmoon%20Apple.png",
-            moony: "apples/Moony%20Apple.png"
+            bloodmoon: "https://static.planetminecraft.com/files/image/minecraft/data-pack/2020/297/13612020-redstone-apple_xl.webp",
+            moony: "https://aether.wiki.gg/images/Modern_White_Apple.png?e320e3"
         };
 
         Object.assign(IMG_FRUITS, {
@@ -1380,7 +1380,6 @@ body {
         window.addEventListener("mousemove", (e) => { player.x = e.clientX; player.y = e.clientY; });
     </script>
 <script src="i18n.js"></script>
-<script src="home-ui.js"></script>
 <script src="craft-machine.js"></script>
 <script src="mobile.js"></script>
 <script type="module" src="accounts-database.js"></script>

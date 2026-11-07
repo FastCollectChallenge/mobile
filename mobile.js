@@ -13,8 +13,6 @@
   /* ---------- réglages ---------- */
   const UI_SCALE = 0.75;         // 1 = taille normale, 0.75 = 25 % plus petit, 0.6 = encore plus petit
   const HOME_LOGO = "icons/Fast%20Collect%20Challenge.png";   // logo à gauche du titre sur l'accueil
-  const DEBUG = true;            // bandeau de diagnostic en bas de l'écran (mettre false une fois le problème réglé)
-  const VERSION = "v3";
   const TOUCH_OFFSET_Y = 56;     // le joystick 🕹️ est décalé au-dessus du doigt pour rester visible
   const NO_GLOW = true;          // supprime les halos (shadowBlur) autour des pommes : gros gain de fluidité
   const CAP_60FPS = true;        // évite que la balle aille 2x plus vite sur les écrans 120 Hz
@@ -41,7 +39,6 @@
 
   /* accueil : on remplace l'échelle 1920x1080 par une échelle adaptée aux petits écrans */
   html.fcm #home-screen{height:100vh!important;height:100dvh!important;--u:min(calc(100vw / 1000),calc(100vh / 520));--u:min(calc(100vw / 1000),calc(100dvh / 520))}
-  html.fcm #hm-root{--hu:min(calc(100vw / 1300),calc(100vh / 600));--hu:min(calc(100vw / 1300),calc(100dvh / 600))}
   html.fcm .home-disclaimer{font-size:8px;bottom:6px;right:8px}
   html.fcm .home-disclaimer img{height:14px;width:auto}
 
@@ -127,63 +124,29 @@
   html.fcm #cm-result .box{padding:16px 24px;gap:8px}
   html.fcm #cm-prompt{padding:8px 12px 8px 8px;font-size:10px}
 
-  /* message "tourne ton téléphone" */
+  /* portrait */
   @media (orientation:portrait){
     html.fcm #home-screen{--u:min(calc(100vw / 600),calc(100dvh / 900))}
-    html.fcm #hm-root{--hu:min(calc(100vw / 700),calc(100dvh / 1000))}
-    html.fcm #hm-modes{flex-direction:column;gap:calc(30 * var(--u));top:calc(50% + 60px)}
+    html.fcm .modes-container{flex-direction:column;gap:calc(30 * var(--u))}
     html.fcm #spawn-panel{top:56px}
     html.fcm #msg-container-top{top:90px}
   }
-  /* accueil mobile : titre avec logo, puis UNE seule barre de rubriques (sans le logo joystick) */
-  html.fcm #hm-title{top:calc(env(safe-area-inset-top,0px) + 34px);display:flex;align-items:center;justify-content:center;gap:10px}
-  html.fcm #hm-title span{font-size:clamp(18px,4.4vw,30px)}
-  html.fcm .fcm-logo{height:clamp(26px,5.5vw,40px);width:auto;display:block;flex:none}
-  html.fcm #hm-head{top:calc(env(safe-area-inset-top,0px) + 72px);left:50%;right:auto;transform:translateX(-50%);width:max-content;max-width:calc(100vw - 16px);height:auto;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;padding:8px 4px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.22);border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
-  html.fcm #hm-head .hm-card,html.fcm #hm-side{display:contents}
-  html.fcm #hm-joy,html.fcm #hm-head .hm-vl,html.fcm #hm-head .hm-hl{display:none}
-  html.fcm #hm-head .hm-ico{gap:6px;padding:4px 12px;white-space:nowrap}
-  html.fcm #hm-head .hm-ico:hover{transform:none}
-  html.fcm #hm-head .hm-ico img{height:16px;width:auto}
-  html.fcm #hm-head .fcm-lbl{font-size:10px;font-weight:700;line-height:1;color:#e8ecf4}
-  html.fcm #hm-account{order:1}
-  html.fcm #hm-discord{order:2;border-left:1px solid rgba(255,255,255,.25)}
-  html.fcm #hm-privacy{order:3;border-left:1px solid rgba(255,255,255,.25)}
-  html.fcm #hm-help{order:4;border-left:1px solid rgba(255,255,255,.25)}`;
+  /* accueil mobile (accueil d'origine, sans home-ui.js) : [logo] titre, puis UNE barre : compte | discord | privacy | how to play */
+  html.fcm .home-header{top:calc(env(safe-area-inset-top,0px) + 10px);height:auto;padding:0 8px;flex-wrap:wrap;justify-content:center;align-items:center;row-gap:10px}
+  html.fcm .main-title{order:-1;flex:0 0 100%;margin:0;text-align:center;font-size:clamp(18px,4.4vw,30px)}
+  html.fcm .main-title::before{content:"";display:inline-block;width:clamp(26px,5.5vw,40px);height:clamp(26px,5.5vw,40px);margin-right:10px;vertical-align:middle;background:url("${HOME_LOGO}") center/contain no-repeat}
+  html.fcm .top-panel{position:static;height:auto;padding:8px 12px;border-radius:0;backdrop-filter:none}
+  html.fcm #top-left-panel,html.fcm #top-right-panel{position:static;height:auto;padding:8px 12px;gap:12px;align-items:center;flex-direction:row}
+  html.fcm #top-left-panel{border-radius:16px 0 0 16px;border-right:0}
+  html.fcm #top-right-panel{border-radius:0 16px 16px 0;flex-direction:row-reverse;border-left:1px solid rgba(255,255,255,.25)}
+  html.fcm .tp-joy,html.fcm .tp-sep-v{display:none}
+  html.fcm .tp-col{flex-direction:row;align-items:center;gap:12px}
+  html.fcm .tp-col .tp-row+.tp-row{padding-left:12px;border-left:1px solid rgba(255,255,255,.25)}
+  html.fcm .tp-row{gap:6px}
+  html.fcm .tp-ico{width:16px;height:16px}
+  html.fcm .tp-txt{font-size:10px}
+  html.fcm .tp-sep-h{align-self:auto;width:1px;height:16px;background:rgba(255,255,255,.25)}`;
   document.head.appendChild(css);
-
-  /* ---------- accueil : logo dans le titre + libellés des rubriques ---------- */
-  function fixHome() {
-    const title = $("hm-title"), head = $("hm-head");
-    if (!title || !head) return false;
-    if (!title.querySelector(".fcm-logo")) {
-      const im = new Image(); im.className = "fcm-logo"; im.src = HOME_LOGO; im.alt = ""; im.draggable = false;
-      title.insertBefore(im, title.firstChild);
-    }
-    ["hm-account", "hm-discord", "hm-privacy", "hm-help"].forEach(id => {
-      const el = $(id); if (!el) return;
-      let l = el.querySelector(".fcm-lbl");
-      if (!l) { l = document.createElement("span"); l.className = "fcm-lbl"; el.appendChild(l); }
-      const im = el.querySelector("img"); l.textContent = (im && im.alt) || "";
-    });
-    return true;
-  }
-  if (!fixHome()) { let n = 0; const iv = setInterval(() => { if (fixHome() || ++n > 40) clearInterval(iv); }, 250); }
-  window.addEventListener("langchange", () => setTimeout(fixHome, 0));
-
-  /* ---------- bandeau de diagnostic (temporaire) ---------- */
-  if (DEBUG) {
-    const b = document.createElement("div");
-    b.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:2147483647;background:rgba(0,0,0,.85);color:#4ADE80;font:11px/1.4 monospace;padding:4px 8px;pointer-events:none;white-space:pre-wrap";
-    document.body.appendChild(b);
-    const upd = () => {
-      const cs = id => { const e = $(id); return e ? getComputedStyle(e).display : "ABSENT"; };
-      b.textContent = "mobile.js " + VERSION + " | fcm:" + root.classList.contains("fcm") +
-        " | home-ui(hm-root):" + (!!$("hm-root")) + " | hm-head:" + cs("hm-head") + " | hm-joy:" + cs("hm-joy") +
-        " | logo:" + (!!document.querySelector(".fcm-logo")) + " | " + innerWidth + "x" + innerHeight;
-    };
-    upd(); setInterval(upd, 1000);
-  }
 
   /* ---------- contrôles tactiles : le doigt remplace la souris ---------- */
   const cv = $("gameCanvas");
@@ -233,6 +196,6 @@
       if (document.fullscreenElement || !el.requestFullscreen) return;
       el.requestFullscreen().then(() => { try { return screen.orientation.lock("landscape"); } catch (e) { } }).catch(() => { });
     };
-    ["hm-adv", "hm-arc"].forEach(id => { const b = $(id); if (b) b.addEventListener("click", go); });
+    document.querySelectorAll(".mode-card").forEach(b => b.addEventListener("click", go));
   }
 })();
