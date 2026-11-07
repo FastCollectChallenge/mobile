@@ -10,6 +10,7 @@
         if (sessionStorage.getItem("fc_desktop")) return;
       } catch (e) {}
       var ua = navigator.userAgent || "";
+      alert("redirect OK : " + ua);
       var isPhone = (navigator.userAgentData && navigator.userAgentData.mobile === true) ||
         /Android|iPhone|iPad|iPod|Mobile|Tablet|Silk|Windows Phone|webOS|BlackBerry|Opera Mini/i.test(ua) ||
         (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
