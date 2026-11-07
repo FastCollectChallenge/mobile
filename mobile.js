@@ -12,7 +12,7 @@
   const TOUCH_OFFSET_Y = 56;     // le joystick 🕹️ est décalé au-dessus du doigt pour rester visible
   const NO_GLOW = true;          // supprime les halos (shadowBlur) autour des pommes : gros gain de fluidité
   const CAP_60FPS = true;        // évite que la balle aille 2x plus vite sur les écrans 120 Hz
-  const AUTO_FULLSCREEN = true;  // plein écran + paysage au clic sur un mode (Android ; iPhone ne le permet pas)
+  const AUTO_FULLSCREEN = false;  // plein écran + paysage au clic sur un mode (Android ; iPhone ne le permet pas)
 
   const root = document.documentElement;
   root.classList.add("fcm");
@@ -121,19 +121,10 @@
   html.fcm #cm-result .box{padding:16px 24px;gap:8px}
   html.fcm #cm-prompt{padding:8px 12px 8px 8px;font-size:10px}
 
-  /* message "tourne ton téléphone" */
-  #fcm-rotate{position:fixed;inset:0;z-index:99999;background:#0a0d14;color:#e8ecf4;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px;font:700 16px/1.4 'Inter',system-ui,sans-serif!important}
-  #fcm-rotate .ic{font-size:64px;animation:fcm-rot 2.2s ease-in-out infinite}
-  @keyframes fcm-rot{0%,15%{transform:rotate(0)}55%,100%{transform:rotate(-90deg)}}
   @media (orientation:portrait){html.fcm #fcm-rotate{display:flex}}`;
   document.head.appendChild(css);
 
-  /* ---------- "tourne ton téléphone" ---------- */
-  const rot = document.createElement("div"); rot.id = "fcm-rotate";
-  rot.innerHTML = '<div class="ic">📱</div><div class="tx"></div>';
-  document.body.appendChild(rot);
-  const setRotText = () => { rot.querySelector(".tx").textContent = isFr() ? "Tourne ton téléphone en mode paysage pour jouer" : "Rotate your phone to landscape to play"; };
-  setRotText(); window.addEventListener("langchange", setRotText);
+
 
   /* ---------- contrôles tactiles : le doigt remplace la souris ---------- */
   const cv = $("gameCanvas");
