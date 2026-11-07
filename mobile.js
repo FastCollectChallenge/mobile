@@ -5,10 +5,13 @@
   const q = new URLSearchParams(location.search);
   if (q.get("mobile") === "0") return;
   const IS_MOBILE = q.get("mobile") === "1" || /^mobile\./.test(location.hostname) ||
-    (matchMedia("(pointer:coarse)").matches && matchMedia("(hover:none)").matches);
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+    (matchMedia("(pointer:coarse)").matches && matchMedia("(hover:none)").matches) ||
+    (navigator.maxTouchPoints > 0 && Math.min(screen.width, screen.height) < 900);
   if (!IS_MOBILE) return;
 
   /* ---------- réglages ---------- */
+  const UI_SCALE = 0.75;         // 1 = taille normale, 0.75 = 25 % plus petit, 0.6 = encore plus petit
   const TOUCH_OFFSET_Y = 56;     // le joystick 🕹️ est décalé au-dessus du doigt pour rester visible
   const NO_GLOW = true;          // supprime les halos (shadowBlur) autour des pommes : gros gain de fluidité
   const CAP_60FPS = true;        // évite que la balle aille 2x plus vite sur les écrans 120 Hz
@@ -22,7 +25,7 @@
   /* ---------- viewport (au cas où la balise meta n'a pas été modifiée) ---------- */
   let meta = document.querySelector('meta[name="viewport"]');
   if (!meta) { meta = document.createElement("meta"); meta.name = "viewport"; document.head.appendChild(meta); }
-  meta.content = "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover";
+  meta.content = "width=device-width, initial-scale=" + UI_SCALE + ", minimum-scale=" + UI_SCALE + ", maximum-scale=" + UI_SCALE + ", user-scalable=no, viewport-fit=cover";
 
   /* ---------- CSS ---------- */
   const SAFE_L = "env(safe-area-inset-left,0px)", SAFE_R = "env(safe-area-inset-right,0px)";
@@ -121,10 +124,16 @@
   html.fcm #cm-result .box{padding:16px 24px;gap:8px}
   html.fcm #cm-prompt{padding:8px 12px 8px 8px;font-size:10px}
 
-  @media (orientation:portrait){html.fcm #fcm-rotate{display:flex}}`;
+  /* message "tourne ton téléphone" */
+  @media (orientation:portrait){
+    html.fcm #home-screen{--u:min(calc(100vw / 600),calc(100dvh / 900))}
+    html.fcm #hm-root{--hu:min(calc(100vw / 700),calc(100dvh / 1000))}
+    html.fcm #hm-title{top:calc(190 * var(--hu))}
+    html.fcm #hm-modes{flex-direction:column;gap:calc(30 * var(--u));top:calc(50% + 60px)}
+    html.fcm #spawn-panel{top:56px}
+    html.fcm #msg-container-top{top:90px}
+  }`;
   document.head.appendChild(css);
-
-
 
   /* ---------- contrôles tactiles : le doigt remplace la souris ---------- */
   const cv = $("gameCanvas");
