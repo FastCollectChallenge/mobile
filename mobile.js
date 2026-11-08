@@ -1,5 +1,5 @@
 // mobile.js : adaptation téléphone (mode paysage). Script classique.
-// À charger APRÈS le script du jeu, i18n.js et craft-machine.js (voir fin de index.html).
+// À charger APRÈS le script du jeu, i18n.js et craft-machine.js (voir fin de index.html : i18n.js, craft-machine.js, mobile.js, accounts-database.js).
 // S'active tout seul sur téléphone/tablette tactile, ou sur mobile.fastcollectchallenge.com, ou avec ?mobile=1.
 (function () {
   const q = new URLSearchParams(location.search);
@@ -111,18 +111,33 @@
   html.fcm .auto-card{font-size:10px;padding:6px;gap:3px}
   html.fcm .auto-card img{width:36px;height:36px}
 
-  /* machine de craft */
-  html.fcm #cm-machine{height:32vh;height:32dvh}
-  html.fcm #cm-title{bottom:calc(32dvh + 6px);font-size:16px;-webkit-text-stroke:2px #f4ecff}
-  html.fcm #cm-recipes{top:8px;bottom:calc(32dvh + 40px);gap:8px;padding:4px 12px}
-  html.fcm .cm-rc{padding:6px 10px;gap:8px;border-radius:12px}
-  html.fcm .cm-ri img{width:30px;height:30px}
-  html.fcm .cm-out img{width:36px;height:36px}
-  html.fcm .cm-cb{padding:8px 12px;font-size:10px}
-  html.fcm #cm-exit{left:calc(12px + ${SAFE_L});bottom:12px;padding:10px 14px}
-  html.fcm #cm-result img{width:80px;height:80px}
-  html.fcm #cm-result .box{padding:16px 24px;gap:8px}
+  /* machine de craft : la mise en page (2 moitiés / petit écran / portrait) est gérée par craft-machine.js lui-même */
   html.fcm #cm-prompt{padding:8px 12px 8px 8px;font-size:10px}
+
+  /* casino : le bouton absolu de gambling-ui.js (84px) est recalé sur des boutons de 48px + 8px d'écart */
+  html.fcm #gamble-btn{top:56px!important;left:56px!important}
+
+  /* fenêtres d'échange / avertissement : tiennent dans l'écran visible (dvh = sans la barre d'adresse) */
+  html.fcm #trade-screen{width:min(400px,94vw)!important;height:min(360px,92vh)!important;height:min(360px,92dvh)!important;max-height:none!important;padding:14px!important}
+  html.fcm #trading-screen{width:min(820px,96vw)!important;height:min(540px,94vh)!important;height:min(540px,94dvh)!important;padding:14px!important}
+  html.fcm #tr-toasts{right:calc(10px + ${SAFE_R});bottom:70px}
+  html.fcm .tr-toast{width:min(300px,56vw);padding:10px;font-size:12px}
+  html.fcm #warn-box{padding:18px 22px;max-height:92vh;max-height:92dvh;overflow-y:auto}
+  html.fcm #warn-box .wt{font-size:20px;margin-bottom:8px}
+  html.fcm #warn-box .wb,html.fcm #warn-box .wx{font-size:13px;line-height:1.5}
+
+  /* écran de connexion */
+  html.fcm #auth-screen{overflow-y:auto;border-width:6px!important}
+  html.fcm #auth-screen>div:first-child img{width:64px!important;height:64px!important}
+  html.fcm #auth-screen>div:first-child>div{font-size:24px!important;line-height:1.3!important}
+  html.fcm #auth-screen .rb>div{width:min(360px,86vw)!important;gap:9px!important}
+  html.fcm #auth-screen #au-social{gap:9px!important}
+
+  /* performances : plus aucun flou d'arrière-plan sur mobile (très coûteux pour le GPU), les panneaux restent lisibles */
+  html.fcm *,html.fcm *::before,html.fcm *::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  html.fcm #inventory-screen,html.fcm #shop-screen,html.fcm #index-screen,html.fcm #trade-screen,html.fcm #trading-screen,html.fcm #gamble-screen,html.fcm #account-panel{background-color:rgba(10,13,20,.95)!important}
+  html.fcm{-webkit-user-select:none;user-select:none}
+  html.fcm input,html.fcm textarea{-webkit-user-select:text;user-select:text}
 
   /* portrait */
   @media (orientation:portrait){
@@ -130,6 +145,9 @@
     html.fcm .modes-container{flex-direction:column;gap:calc(30 * var(--u))}
     html.fcm #spawn-panel{top:56px}
     html.fcm #msg-container-top{top:90px}
+    html.fcm #auth-screen{flex-direction:column;justify-content:center;gap:12px;padding:12px 0}
+    html.fcm #auth-screen>div{width:100%!important;justify-content:center}
+    html.fcm #auth-screen>div[style*="position:absolute"]{width:auto!important;top:8px!important;right:10px!important}
   }
   /* accueil mobile (accueil d'origine, sans home-ui.js) : [logo] titre, puis UNE barre : compte | discord | privacy | how to play */
   html.fcm .home-header{top:calc(env(safe-area-inset-top,0px) + 10px);height:auto;padding:0 8px;flex-wrap:wrap;justify-content:center;align-items:center;row-gap:10px}
@@ -150,7 +168,7 @@
 
   /* ---------- contrôles tactiles : le doigt remplace la souris ---------- */
   const cv = $("gameCanvas");
-  const OVERLAYS = ["inventory-screen", "shop-screen", "index-screen", "trade-screen", "trading-screen", "profile-page", "sell-modal", "custom-confirm-modal", "autosell-modal", "add-modal", "account-modal"];
+  const OVERLAYS = ["inventory-screen", "shop-screen", "index-screen", "trade-screen", "trading-screen", "profile-page", "sell-modal", "custom-confirm-modal", "autosell-modal", "add-modal", "account-modal", "gamble-screen"];
   const overlayOpen = () => OVERLAYS.some(id => { const e = $(id); return e && getComputedStyle(e).display !== "none"; });
   let touchId = null, ignore = false;
   const moveTo = t => {
@@ -171,10 +189,12 @@
     const end = e => { for (const t of e.changedTouches) if (t.identifier === touchId) touchId = null; };
     cv.addEventListener("touchend", end); cv.addEventListener("touchcancel", end);
   }
+  document.addEventListener("visibilitychange", () => { if (document.hidden) touchId = null; });
   window.addEventListener("contextmenu", e => e.preventDefault());   // pas de menu au appui long
 
   /* ---------- machine de craft : "E" n'existe pas sur téléphone ---------- */
-  const k = document.querySelector("#cm-prompt .cm-k"); if (k) k.textContent = "👆";
+  const setK = () => { const k = document.querySelector("#cm-prompt .cm-k"); if (k) k.textContent = "👆"; };
+  setK(); window.addEventListener("load", setK);
 
   /* ---------- performances ---------- */
   if (NO_GLOW && cv) {
